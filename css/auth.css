@@ -1,0 +1,211 @@
+:root {
+    --primary: #e53e3e;
+    --primary-dark: #c53030;
+    --secondary: #f6ad55;
+    --dark: #1a202c;
+    --darker: #0d1117;
+    --darkest: #070a0f;
+    --light: #f3f4f6;
+    --gray: #9ca3af;
+    --light-gray: #e2e8f0;
+}
+
+body {
+    background-color: var(--darkest);
+    color: var(--light);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: 
+        radial-gradient(circle at 100% 0%, rgba(229, 62, 62, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 0% 100%, rgba(229, 62, 62, 0.1) 0%, transparent 50%);
+}
+
+.auth-container {
+    background-color: var(--darker);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo i {
+    font-size: 3rem;
+    color: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h1 {
+    text-align: center;
+    color: var(--light);
+    margin: 0 0 2rem 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--gray);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    color: var(--light);
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+}
+
+.error {
+    color: #ff4d4d;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    padding: 0.75rem;
+    background-color: rgba(255, 77, 77, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 77, 77, 0.2);
+    font-size: 0.875rem;
+}
+
+.success {
+    color: #00cc66;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    padding: 0.75rem;
+    background-color: rgba(0, 204, 102, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 204, 102, 0.2);
+    font-size: 0.875rem;
+}
+
+.btn {
+    width: 100%;
+    padding: 0.875rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.links {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.links a {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.3s ease;
+}
+
+.links a:hover {
+    color: var(--secondary);
+}
+
+.divider {
+    margin: 0 0.625rem;
+    color: var(--gray);
+}
+
+.user-type-toggle {
+    display: flex;
+    gap: 0.625rem;
+    margin-bottom: 1.5rem;
+    padding: 0.3125rem;
+    background-color: var(--dark);
+    border-radius: 8px;
+}
+
+.user-type-toggle label {
+    flex: 1;
+    padding: 0.625rem;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--gray);
+    font-size: 0.875rem;
+}
+
+.user-type-toggle input[type="radio"] {
+    display: none;
+}
+
+.user-type-toggle input[type="radio"]:checked + label {
+    background-color: var(--primary);
+    color: white;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-container {
+    animation: fadeIn 0.5s ease-out;
+} 

@@ -69,117 +69,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - <?php echo SITE_NAME; ?></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .login-container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .logo i {
-            font-size: 48px;
-            color: #4CAF50;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin: 0 0 30px 0;
-            font-size: 24px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: 500;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus {
-            border-color: #4CAF50;
-            outline: none;
-        }
-        .error {
-            color: #dc3545;
-            margin-bottom: 20px;
-            text-align: center;
-            padding: 10px;
-            background-color: #fff3f3;
-            border-radius: 4px;
-        }
-        .success {
-            color: #28a745;
-            margin-bottom: 20px;
-            text-align: center;
-            padding: 10px;
-            background-color: #f0fff4;
-            border-radius: 4px;
-        }
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #45a049;
-        }
-        .links {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .links a {
-            color: #4CAF50;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .links a:hover {
-            text-decoration: underline;
-        }
-        .divider {
-            margin: 0 10px;
-            color: #ccc;
-        }
-    </style>
+    <title>Login - KickStep</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="login-container">
+    <div class="auth-container">
         <div class="logo">
-            <i class="fas fa-shopping-bag"></i>
+            <i class="fas fa-shoe-prints"></i>
         </div>
-        <h1>Welcome Back</h1>
+        <h1>Welcome Back to KickStep</h1>
         
         <?php if (isset($_SESSION['logout_message'])): ?>
             <div class="success">
@@ -197,36 +97,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="POST" action="">
-            <div class="form-group">
-                <label for="user_type">Login As</label>
-                <div class="input-group">
-                    <i class="fas fa-users"></i>
-                    <select name="user_type" id="user_type" class="form-control" required>
-                        <option value="user">Customer</option>
-                        <option value="admin">Administrator</option>
-                    </select>
-                </div>
+            <div class="user-type-toggle">
+                <input type="radio" id="user" name="user_type" value="user" checked>
+                <label for="user">Customer</label>
+                <input type="radio" id="admin" name="user_type" value="admin">
+                <label for="admin">Administrator</label>
             </div>
 
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" name="email" class="form-control" 
-                           value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" 
-                           required>
-                </div>
+                <input type="email" id="email" name="email" 
+                       value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" 
+                       placeholder="Enter your email"
+                       required>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" name="password" class="form-control" required>
-                </div>
+                <input type="password" id="password" name="password" 
+                       placeholder="Enter your password"
+                       required>
             </div>
 
-            <button type="submit" class="btn">Login</button>
+            <button type="submit" class="btn">
+                <span>Login</span>
+            </button>
 
             <div class="links">
                 <a href="register.php">Create Account</a>

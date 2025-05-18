@@ -1,9 +1,11 @@
 <?php
+require_once '../includes/config.php';
 require_once '../includes/db.php';
-session_start();
+require_once '../includes/auth.php';
 
-// Check if admin is logged in
-if (!isset($_SESSION['admin_id'])) {
+// Check if admin is logged in using the auth function
+if (!isAdmin()) {
+    $_SESSION['error_message'] = "You don't have permission to access this page.";
     header('Location: ../login.php');
     exit();
 }
@@ -33,6 +35,11 @@ $orders = $conn->query("
     GROUP BY o.id
     ORDER BY o.created_at DESC
 ");
+
+// Check if there was an error with the query
+if (!$orders) {
+    $error_message = "Error fetching orders: " . $conn->error;
+}
 
 ?>
 
@@ -82,6 +89,19 @@ $orders = $conn->query("
             <header class="admin-header">
                 <h1 class="admin-title">Manage Orders</h1>
             </header>
+
+            <?php if (isset($error_message)): ?>
+                <div class="admin-alert admin-alert-danger">
+                    <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['success_message'])): ?>
+                <div class="admin-alert admin-alert-success">
+                    <?php echo htmlspecialchars($_SESSION['success_message']); ?>
+                    <?php unset($_SESSION['success_message']); ?>
+                </div>
+            <?php endif; ?>
 
             <!-- Orders Table -->
             <div class="admin-table-container">
