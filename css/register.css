@@ -1,0 +1,119 @@
+:root {
+    --primary: #e53e3e;
+    --primary-dark: #c53030;
+    --secondary: #f6ad55;
+    --dark: #1a202c;
+    --darker: #0d1117;
+    --light: #f3f4f6;
+    --gray: #9ca3af;
+    --light-gray: #e2e8f0;
+}
+
+body {
+    background-color: var(--dark);
+    color: var(--light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background-color: var(--darker);
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(229, 62, 62, 0.3);
+    width: 100%;
+    max-width: 400px;
+}
+
+h2 {
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 30px;
+    font-size: 28px;
+    text-align: center;
+}
+
+.errors {
+    background-color: #4c1515;
+    border: 1px solid #a83232;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.errors ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #f56565; /* a softer red */
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+label {
+    font-size: 14px;
+    color: var(--gray);
+    margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    padding: 12px 15px;
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    background-color: var(--dark);
+    color: var(--light);
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 8px var(--primary);
+}
+
+.btn {
+    padding: 14px 0;
+    background-color: var(--primary);
+    color: var(--light);
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-3px);
+}
+
+p {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--gray);
+    text-align: center;
+}
+
+p a {
+    color: var(--secondary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+p a:hover {
+    color: var(--primary);
+}
