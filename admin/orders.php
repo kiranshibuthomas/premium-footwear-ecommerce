@@ -1,11 +1,13 @@
 <?php
-require_once '../includes/config.php';
 require_once '../includes/db.php';
-require_once '../includes/auth.php';
 
-// Check if admin is logged in using the auth function
-if (!isAdmin()) {
-    $_SESSION['error_message'] = "You don't have permission to access this page.";
+// Only start session if one hasn't been started already
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if admin is logged in
+if (!isset($_SESSION['admin_id'])) {
     header('Location: ../login.php');
     exit();
 }
@@ -69,7 +71,7 @@ if (!$orders) {
                         </a>
                     </li>
                     <li class="admin-nav-item">
-                        <a href="manageproducts.php" class="admin-nav-link">
+                        <a href="manageproduct.php" class="admin-nav-link">
                             <i class="fas fa-box"></i>
                             Products
                         </a>

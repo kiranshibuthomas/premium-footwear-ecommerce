@@ -113,7 +113,7 @@ $top_products = $conn->query("
                         <h3 class="admin-card-title">Total Revenue</h3>
                         <i class="fas fa-dollar-sign"></i>
                     </div>
-                    <div class="admin-card-value">$<?php echo number_format($revenue, 2); ?></div>
+                    <div class="admin-card-value" id="revenue-value">$<?php echo number_format($revenue, 2); ?></div>
                 </div>
 
                 <div class="admin-card">
@@ -121,7 +121,7 @@ $top_products = $conn->query("
                         <h3 class="admin-card-title">Total Orders</h3>
                         <i class="fas fa-shopping-cart"></i>
                     </div>
-                    <div class="admin-card-value"><?php echo number_format($total_orders); ?></div>
+                    <div class="admin-card-value" id="orders-value"><?php echo number_format($total_orders); ?></div>
                 </div>
 
                 <div class="admin-card">
@@ -129,7 +129,7 @@ $top_products = $conn->query("
                         <h3 class="admin-card-title">Total Products</h3>
                         <i class="fas fa-box"></i>
                     </div>
-                    <div class="admin-card-value"><?php echo number_format($total_products); ?></div>
+                    <div class="admin-card-value" id="products-value"><?php echo number_format($total_products); ?></div>
                 </div>
 
                 <div class="admin-card">
@@ -137,7 +137,7 @@ $top_products = $conn->query("
                         <h3 class="admin-card-title">Low Stock Alert</h3>
                         <i class="fas fa-exclamation-triangle"></i>
                     </div>
-                    <div class="admin-card-value"><?php echo number_format($low_stock); ?></div>
+                    <div class="admin-card-value" id="low-stock-value"><?php echo number_format($low_stock); ?></div>
                 </div>
             </div>
 
@@ -196,7 +196,7 @@ $top_products = $conn->query("
             <div class="admin-section">
                 <div class="admin-section-header">
                     <h2 class="admin-section-title">Top Selling Products</h2>
-                    <a href="products.php" class="admin-btn admin-btn-secondary">
+                    <a href="manageproduct.php" class="admin-btn admin-btn-secondary">
                         Manage Products
                         <i class="fas fa-arrow-right"></i>
                     </a>
@@ -241,5 +241,79 @@ $top_products = $conn->query("
             </div>
         </main>
     </div>
+
+    <script>
+        // Function to update dashboard stats
+        function updateDashboardStats() {
+            fetch('get_stats.php')
+                .then(response => response.json())
+                .then(data => {
+                    // Update revenue
+                    document.getElementById('revenue-value').textContent = '$' + parseFloat(data.revenue).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
+                    // Update orders
+                    document.getElementById('orders-value').textContent = parseInt(data.total_orders).toLocaleString();
+
+                    // Update products
+                    document.getElementById('products-value').textContent = parseInt(data.total_products).toLocaleString();
+
+                    // Update low stock
+                    document.getElementById('low-stock-value').textContent = parseInt(data.low_stock).toLocaleString();
+                })
+                .catch(error => console.error('Error updating stats:', error));
+        }
+
+        // Update stats every 30 seconds
+        setInterval(updateDashboardStats, 30000);
+
+        // Add subtle animation when values change
+        const observeValue = (element) => {
+            let oldValue = element.textContent;
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                        const newValue = element.textContent;
+                        if (newValue !== oldValue) {
+                            element.style.animation = 'none';
+                            element.offsetHeight; // Trigger reflow
+                            element.style.animation = 'valueChange 0.5s ease-in-out';
+                            oldValue = newValue;
+                        }
+                    }
+                });
+            });
+            observer.observe(element, { characterData: true, childList: true, subtree: true });
+        };
+
+        // Observe all stat values for changes
+        ['revenue-value', 'orders-value', 'products-value', 'low-stock-value'].forEach(id => {
+            observeValue(document.getElementById(id));
+        });
+    </script>
+
+    <style>
+        @keyframes valueChange {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .admin-card-value {
+            color: #e53e3e !important; /* Red color for numbers */
+            font-weight: bold;
+        }
+    </style>
 </body>
 </html>
