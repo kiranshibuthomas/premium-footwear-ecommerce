@@ -55,13 +55,11 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                 <div class="nav-links">
                     <a href="home.php" class="active">Home</a>
                     <a href="products.php">Shop</a>
-                    <a href="#">New Arrivals</a>
-                    <a href="#">Brands</a>
-                    <a href="#">About</a>
+                    <a href="ab">About</a>
                     <a href="#">Contact</a>
                 </div>
                 <div class="nav-icons">
-                    <a href="#"><i class="fas fa-search"></i></a>
+                    <!--a href="#"><i class="fas fa-search"></i></a-->
                     <a href="cart.php">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="badge"><?php echo $cart_count; ?></span>
@@ -110,7 +108,7 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                 <a href="products.php" class="btn">Shop Now</a>
             </div>
             <div class="hero-image">
-                <img src="uploads/products/" alt="Featured Shoe">
+                
             </div>
         </div>
     </section>
@@ -212,10 +210,10 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                     <h3>KickStep</h3>
                     <p>Premium footwear for every occasion. Step into comfort and style with our quality shoes.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                        <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://x.com/"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                        <a href="https://in.pinterest.com/"><i class="fab fa-pinterest"></i></a>
                     </div>
                 </div>
                 
@@ -223,9 +221,9 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                     <h3>Shop</h3>
                     <ul>
                         <li><a href="products.php">All Products</a></li>
-                        <li><a href="#">New Arrivals</a></li>
-                        <li><a href="#">Best Sellers</a></li>
-                        <li><a href="#">On Sale</a></li>
+                        <li><a href="products.php">New Arrivals</a></li>
+                        <li><a href="products.php">Best Sellers</a></li>
+                        <li><a href="products.php">On Sale</a></li>
                     </ul>
                 </div>
                 

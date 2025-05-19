@@ -263,9 +263,9 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                 <div class="nav-links">
                     <a href="home.php">Home</a>
                     <a href="products.php" class="active">Shop</a>
-                    <a href="#">New Arrivals</a>
-                    <a href="#">Brands</a>
-                    <a href="#">About</a>
+         
+                    
+                    <a href="about.php">About</a>
                     <a href="#">Contact</a>
                 </div>
                 <div class="nav-icons">
