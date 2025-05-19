@@ -192,7 +192,7 @@ $top_products = $conn->query("
                 </div>
             </div>
 
-            <!-- Top Products -->
+            <!-- Top Products 
             <div class="admin-section">
                 <div class="admin-section-header">
                     <h2 class="admin-section-title">Top Selling Products</h2>
@@ -238,9 +238,9 @@ $top_products = $conn->query("
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div>-->
         </main>
-    </div>
+    </div> 
 
     <script>
         // Function to update dashboard stats
