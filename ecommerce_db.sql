@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2025 at 09:54 AM
+-- Generation Time: Jun 06, 2025 at 08:09 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -62,8 +62,32 @@ CREATE TABLE `cart_items` (
 --
 
 INSERT INTO `cart_items` (`id`, `user_id`, `product_id`, `quantity`, `created_at`, `updated_at`) VALUES
-(8, 1, 6, 1, '2025-05-19 03:04:33', '2025-05-19 03:04:33'),
-(9, 1, 7, 1, '2025-05-19 03:04:34', '2025-05-19 03:04:34');
+(15, 1, 14, 1, '2025-06-06 05:11:05', '2025-06-06 05:11:05'),
+(16, 1, 13, 1, '2025-06-06 05:11:06', '2025-06-06 05:11:06');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `status` enum('unread','read','replied') DEFAULT 'unread',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `user_id`, `subject`, `message`, `status`, `created_at`, `updated_at`) VALUES
+(2, 1, 'TEST', 'HELLO THERE !', 'read', '2025-06-06 05:53:44', '2025-06-06 05:54:12'),
+(3, 1, 'test2', 'HELLO AGAIN!', 'unread', '2025-06-06 05:56:22', '2025-06-06 05:56:22');
 
 -- --------------------------------------------------------
 
@@ -87,7 +111,9 @@ CREATE TABLE `orders` (
 
 INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `shipping_address`, `created_at`, `updated_at`) VALUES
 (1, 1, 160.98, 'pending', 'testaddress@okplace', '2025-05-18 14:54:42', '2025-05-18 14:54:42'),
-(2, 3, 12.99, 'pending', 'awdsawdawdawdaw', '2025-05-18 16:00:23', '2025-05-18 16:00:23');
+(2, 3, 12.99, 'pending', 'awdsawdawdawdaw', '2025-05-18 16:00:23', '2025-05-18 16:00:23'),
+(3, 1, 239.98, 'pending', 'aswdawd', '2025-05-19 08:02:58', '2025-05-19 08:02:58'),
+(4, 1, 66.99, 'pending', 'newyork 76th street .....', '2025-06-05 17:22:14', '2025-06-05 17:22:14');
 
 -- --------------------------------------------------------
 
@@ -111,7 +137,11 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price_at
 (1, 1, 9, 1, 30.99),
 (2, 1, 8, 1, 29.99),
 (3, 1, 7, 1, 100.00),
-(4, 2, 10, 1, 12.99);
+(4, 2, 10, 1, 12.99),
+(5, 3, 6, 1, 99.99),
+(6, 3, 7, 1, 100.00),
+(7, 3, 16, 1, 39.99),
+(8, 4, 13, 1, 66.99);
 
 -- --------------------------------------------------------
 
@@ -135,17 +165,17 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `description`, `price`, `stock`, `image_path`, `category`, `created_at`) VALUES
-(6, 'Shoe 2', 'NEW', 99.99, 10, 'product_1747578547_f694a45f5f3829b8.jpg', 'Sports', '2025-05-18 14:29:07'),
-(7, 'Shoe3', 'NEW', 100.00, 9, 'product_1747582786_f55924464c4a25ef.jpg', 'Sports', '2025-05-18 14:29:31'),
+(6, 'Shoe 2', 'NEW', 99.99, 9, 'product_1747578547_f694a45f5f3829b8.jpg', 'Sports', '2025-05-18 14:29:07'),
+(7, 'Shoe3', 'NEW', 100.00, 8, 'product_1747582786_f55924464c4a25ef.jpg', 'Sports', '2025-05-18 14:29:31'),
 (8, 'Shoe 4', 'NEW', 29.99, 5, 'product_1747578592_c616204dfda1287a.jpg', 'Sports', '2025-05-18 14:29:52'),
 (9, 'Shoe 4', 'NEW', 30.99, 9, 'product_1747578611_44d6124a58be0740.jpg', 'Sports', '2025-05-18 14:30:11'),
 (10, 'Shoe 4', 'NEW', 12.99, 11, 'product_1747583223_cd5b02a7af3d7ef8.jpg', 'Sports', '2025-05-18 15:47:03'),
 (11, 'Shoe 4', 'NEW', 166.99, 10, 'product_1747583245_8aea47699d8f619b.jpg', 'Sports', '2025-05-18 15:47:25'),
 (12, 'Shoe 4', 'NEW', 79.99, 19, 'product_1747583260_5768e0a0202682c4.jpg', 'Sports', '2025-05-18 15:47:40'),
-(13, 'Shoe 4', 'NEW', 66.99, 12, 'product_1747583277_6688a7c91cb33fef.jpg', 'Sports', '2025-05-18 15:47:57'),
+(13, 'Shoe 4', 'NEW', 66.99, 11, 'product_1747583277_6688a7c91cb33fef.jpg', 'Sports', '2025-05-18 15:47:57'),
 (14, 'Shoe 4', 'NEW', 49.99, 12, 'product_1747583307_e064ea82b5106520.jpg', 'Sports', '2025-05-18 15:48:27'),
 (15, 'Shoe 4', 'NEW', 70.99, 12, 'product_1747583325_9f64f49bfa5787a0.jpg', 'Sports', '2025-05-18 15:48:45'),
-(16, 'Shoe 4', 'NEW', 39.99, 30, 'product_1747583347_bbeb68bd32d89e3b.jpg', 'Sports', '2025-05-18 15:49:07');
+(16, 'Shoe 4', 'NEW', 39.99, 29, 'product_1747583347_bbeb68bd32d89e3b.jpg', 'Sports', '2025-05-18 15:49:07');
 
 -- --------------------------------------------------------
 
@@ -190,6 +220,13 @@ ALTER TABLE `cart_items`
   ADD KEY `product_id` (`product_id`);
 
 --
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
@@ -231,19 +268,25 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -267,6 +310,12 @@ ALTER TABLE `users`
 ALTER TABLE `cart_items`
   ADD CONSTRAINT `cart_items_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `cart_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `messages`
+--
+ALTER TABLE `messages`
+  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `orders`
