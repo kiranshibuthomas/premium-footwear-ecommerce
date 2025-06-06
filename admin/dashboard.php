@@ -51,6 +51,18 @@ $top_products = $conn->query("
     ORDER BY total_quantity DESC
     LIMIT 5
 ");
+
+// Get recent messages
+$recent_messages = $conn->query("
+    SELECT m.*, u.name as user_name, u.email as user_email
+    FROM messages m
+    JOIN users u ON m.user_id = u.id
+    ORDER BY m.created_at DESC
+    LIMIT 5
+");
+
+// Get unread messages count
+$unread_messages = $conn->query("SELECT COUNT(*) as count FROM messages WHERE status = 'unread'")->fetch_assoc()['count'];
 ?>
 
 <!DOCTYPE html>
@@ -88,6 +100,12 @@ $top_products = $conn->query("
                         <a href="orders.php" class="admin-nav-link">
                             <i class="fas fa-shopping-cart"></i>
                             Orders
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="messages.php" class="admin-nav-link">
+                            <i class="fas fa-envelope"></i>
+                            Messages
                         </a>
                     </li>
                     <li class="admin-nav-item" style="margin-top: auto;">
@@ -138,6 +156,14 @@ $top_products = $conn->query("
                         <i class="fas fa-exclamation-triangle"></i>
                     </div>
                     <div class="admin-card-value" id="low-stock-value"><?php echo number_format($low_stock); ?></div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">Unread Messages</h3>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="admin-card-value" id="messages-value"><?php echo number_format($unread_messages); ?></div>
                 </div>
             </div>
 
@@ -239,6 +265,68 @@ $top_products = $conn->query("
                     </table>
                 </div>
             </div>-->
+
+            <!-- Recent Messages -->
+            <div class="admin-section">
+                <div class="admin-section-header">
+                    <h2 class="admin-section-title">Recent Messages</h2>
+                    <a href="messages.php" class="admin-btn admin-btn-secondary">
+                        View All Messages
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>From</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($message = $recent_messages->fetch_assoc()): ?>
+                            <tr class="<?php echo $message['status'] === 'unread' ? 'unread-message' : ''; ?>">
+                                <td>
+                                    <div class="user-cell">
+                                        <span class="user-name"><?php echo htmlspecialchars($message['user_name']); ?></span>
+                                        <span class="user-email"><?php echo htmlspecialchars($message['user_email']); ?></span>
+                                    </div>
+                                </td>
+                                <td><?php echo htmlspecialchars($message['subject']); ?></td>
+                                <td>
+                                    <div class="message-preview">
+                                        <?php echo htmlspecialchars(substr($message['message'], 0, 50)) . (strlen($message['message']) > 50 ? '...' : ''); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <?php
+                                    $status_classes = [
+                                        'unread' => 'warning',
+                                        'read' => 'info'
+                                    ];
+                                    $status_class = $status_classes[$message['status']] ?? 'secondary';
+                                    ?>
+                                    <span class="admin-badge admin-badge-<?php echo $status_class; ?>">
+                                        <?php echo ucfirst($message['status']); ?>
+                                    </span>
+                                </td>
+                                <td><?php echo date('M j, Y H:i', strtotime($message['created_at'])); ?></td>
+                                <td>
+                                    <a href="view_message.php?id=<?php echo $message['id']; ?>" class="admin-btn admin-btn-small">
+                                        <i class="fas fa-eye"></i>
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </main>
     </div> 
 
@@ -262,6 +350,9 @@ $top_products = $conn->query("
 
                     // Update low stock
                     document.getElementById('low-stock-value').textContent = parseInt(data.low_stock).toLocaleString();
+
+                    // Update messages count
+                    document.getElementById('messages-value').textContent = parseInt(data.unread_messages).toLocaleString();
                 })
                 .catch(error => console.error('Error updating stats:', error));
         }
@@ -289,7 +380,7 @@ $top_products = $conn->query("
         };
 
         // Observe all stat values for changes
-        ['revenue-value', 'orders-value', 'products-value', 'low-stock-value'].forEach(id => {
+        ['revenue-value', 'orders-value', 'products-value', 'low-stock-value', 'messages-value'].forEach(id => {
             observeValue(document.getElementById(id));
         });
     </script>
@@ -313,6 +404,41 @@ $top_products = $conn->query("
         .admin-card-value {
             color: #e53e3e !important; /* Red color for numbers */
             font-weight: bold;
+        }
+
+        .unread-message {
+            background: rgba(var(--primary-rgb), 0.05);
+        }
+
+        .user-cell {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .user-email {
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        .message-preview {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .admin-btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .admin-btn-small i {
+            margin-right: 0.25rem;
         }
     </style>
 </body>

@@ -19,7 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     
     $stmt = $conn->prepare("UPDATE orders SET status = ? WHERE id = ?");
     $stmt->bind_param("si", $status, $order_id);
-    $stmt->execute();
+    
+    if ($stmt->execute()) {
+        $_SESSION['order_success_message'] = "Order status updated successfully.";
+    } else {
+        $error_message = "Failed to update order status. Please try again.";
+    }
     
     header('Location: orders.php');
     exit();
@@ -98,10 +103,10 @@ if (!$orders) {
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($_SESSION['success_message'])): ?>
+            <?php if (isset($_SESSION['order_success_message'])): ?>
                 <div class="admin-alert admin-alert-success">
-                    <?php echo htmlspecialchars($_SESSION['success_message']); ?>
-                    <?php unset($_SESSION['success_message']); ?>
+                    <?php echo htmlspecialchars($_SESSION['order_success_message']); ?>
+                    <?php unset($_SESSION['order_success_message']); ?>
                 </div>
             <?php endif; ?>
 

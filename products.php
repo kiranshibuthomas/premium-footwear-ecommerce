@@ -73,239 +73,53 @@ $cart_count = $cart_result->fetch_assoc()['count'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop - KickStep</title>
-    <link rel="stylesheet" href="css/dark-theme.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <style>
-        .products-section {
-            padding: 80px 0;
-            min-height: calc(100vh - 400px);
-        }
-
-        .filters {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: var(--darker);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .filter-group label {
-            color: var(--gray);
-        }
-
-        .filter-select {
-            padding: 8px 15px;
-            border-radius: 5px;
-            background-color: var(--dark);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--light);
-            cursor: pointer;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .product-card {
-            background-color: var(--darker);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .product-image {
-            position: relative;
-            padding-top: 100%;
-            background-color: var(--dark);
-        }
-
-        .product-image img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-tag {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            background-color: rgba(229, 62, 62, 0.9);
-            color: white;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .product-info {
-            padding: 20px;
-        }
-
-        .product-name {
-            color: var(--light);
-            margin: 0 0 5px 0;
-            font-size: 18px;
-        }
-
-        .product-category {
-            color: var(--gray);
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .product-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .price {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 20px;
-        }
-
-        .add-to-cart {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: none;
-            background-color: var(--primary);
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .add-to-cart:hover {
-            background-color: var(--primary-dark);
-            transform: scale(1.1);
-        }
-
-        .empty-products {
-            text-align: center;
-            padding: 60px 0;
-        }
-
-        .empty-products i {
-            font-size: 60px;
-            color: var(--gray);
-            margin-bottom: 20px;
-        }
-
-        .empty-products h2 {
-            color: var(--light);
-            margin-bottom: 20px;
-        }
-
-        .empty-products p {
-            color: var(--gray);
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .filters {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .filter-group {
-                width: 100%;
-            }
-
-            .filter-select {
-                width: 100%;
-            }
-
-            .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 20px;
-            }
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/modern-theme.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Loading Overlay (Optional: Add if needed for a consistent loading animation) -->
+    <!-- <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div> -->
+
+    <!-- Animated Background (Optional: Add if needed for a consistent background) -->
+    <!-- <div class="bg-animation"></div>
+    <div id="particles"></div> -->
+
     <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="home.php" class="logo">
-                    <i class="fas fa-shoe-prints"></i>
-                    KickStep
+    <header id="header">
+        <nav>
+            <a href="home.php" class="logo shine">
+                <i class="fas fa-shoe-prints"></i>
+                KickStep
+            </a>
+            <div class="nav-links">
+                <a href="home.php">Home</a>
+                <a href="products.php" class="active">Shop</a>
+                <a href="about.php">About</a>
+                <a href="contact.php">Contact</a>
+            </div>
+            <div class="nav-icons">
+                <a href="cart.php" class="floating">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge"><?php echo $cart_count; ?></span>
                 </a>
-                <div class="nav-links">
-                    <a href="home.php">Home</a>
-                    <a href="products.php" class="active">Shop</a>
-         
-                    
-                    <a href="about.php">About</a>
-                    <a href="#">Contact</a>
-                </div>
-                <div class="nav-icons">
-                    <a href="#"><i class="fas fa-search"></i></a>
-                    <a href="cart.php">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="badge"><?php echo $cart_count; ?></span>
-                    </a>
-                    <div class="user-dropdown">
-                        <a href="#"><i class="fas fa-user"></i></a>
-                        <div class="dropdown-menu">
-                            <div class="user-info">
-                                <div class="user-name"><?php echo htmlspecialchars($user['name']); ?></div>
-                                <div class="user-email"><?php echo htmlspecialchars($user['email']); ?></div>
-                            </div>
-                            <ul>
-                                <li>
-                                    <a href="profile.php">
-                                        <i class="fas fa-user-circle"></i>
-                                        My Profile
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="orders.php">
-                                        <i class="fas fa-shopping-bag"></i>
-                                        My Orders
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="logout.php">
-                                        <i class="fas fa-sign-out-alt"></i>
-                                        Logout
-                                    </a>
-                                </li>
-                            </ul>
+                <div class="user-dropdown">
+                    <a href="#"><i class="fas fa-user"></i></a>
+                    <div class="dropdown-menu">
+                        <div class="user-info">
+                            <div class="user-name"><?php echo htmlspecialchars($user['name']); ?></div>
+                            <div class="user-email"><?php echo htmlspecialchars($user['email']); ?></div>
                         </div>
+                        <ul>
+                            <li><a href="profile.php"><i class="fas fa-user-circle"></i> <span>My Profile</span></a></li>
+                            <li><a href="orders.php"><i class="fas fa-shopping-bag"></i> <span>My Orders</span></a></li>
+                            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+                        </ul>
                     </div>
                 </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
     </header>
 
     <!-- Products Section -->
@@ -314,6 +128,23 @@ $cart_count = $cart_result->fetch_assoc()['count'];
             <div class="filters">
                 <div class="filter-group">
                     <label>Category:</label>
+                    <!-- Custom Category Dropdown -->
+                    <div class="custom-dropdown" id="categoryDropdown">
+                        <div class="dropdown-display">
+                            <span class="selected-value">All Categories</span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                        <ul class="dropdown-options">
+                            <li data-value="all" class="selected">All Categories</li>
+                            <?php foreach ($categories as $cat): ?>
+                            <li data-value="<?php echo htmlspecialchars($cat['category']); ?>">
+                                <?php echo htmlspecialchars($cat['category']); ?>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <!-- Removed native select -->
+                    <?php /*
                     <select class="filter-select" onchange="window.location.href='?category='+this.value+'&sort=<?php echo $sort; ?>'">
                         <option value="all" <?php echo $category === 'all' ? 'selected' : ''; ?>>All Categories</option>
                         <?php foreach ($categories as $cat): ?>
@@ -323,15 +154,41 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                         </option>
                         <?php endforeach; ?>
                     </select>
+                    */ ?>
                 </div>
                 <div class="filter-group">
                     <label>Sort by:</label>
+                    <!-- Custom Sort by Dropdown -->
+                    <div class="custom-dropdown" id="sortByDropdown">
+                        <div class="dropdown-display">
+                             <span class="selected-value">
+                                <?php
+                                    switch ($sort) {
+                                        case 'oldest': echo 'Oldest First'; break;
+                                        case 'price_low': echo 'Price: Low to High'; break;
+                                        case 'price_high': echo 'Price: High to Low'; break;
+                                        default: echo 'Newest First'; break; // newest
+                                    }
+                                ?>
+                             </span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                        <ul class="dropdown-options">
+                            <li data-value="newest" <?php echo $sort === 'newest' ? 'class="selected"' : ''; ?>>Newest First</li>
+                            <li data-value="oldest" <?php echo $sort === 'oldest' ? 'class="selected"' : ''; ?>>Oldest First</li>
+                            <li data-value="price_low" <?php echo $sort === 'price_low' ? 'class="selected"' : ''; ?>>Price: Low to High</li>
+                            <li data-value="price_high" <?php echo $sort === 'price_high' ? 'class="selected"' : ''; ?>>Price: High to Low</li>
+                        </ul>
+                    </div>
+                    <!-- Removed native select -->
+                     <?php /*
                     <select class="filter-select" onchange="window.location.href='?category=<?php echo $category; ?>&sort='+this.value">
                         <option value="newest" <?php echo $sort === 'newest' ? 'selected' : ''; ?>>Newest First</option>
                         <option value="oldest" <?php echo $sort === 'oldest' ? 'selected' : ''; ?>>Oldest First</option>
                         <option value="price_low" <?php echo $sort === 'price_low' ? 'selected' : ''; ?>>Price: Low to High</option>
                         <option value="price_high" <?php echo $sort === 'price_high' ? 'selected' : ''; ?>>Price: High to Low</option>
                     </select>
+                    */ ?>
                 </div>
             </div>
 
@@ -378,10 +235,10 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                     <h3>KickStep</h3>
                     <p>Premium footwear for every occasion. Step into comfort and style with our quality shoes.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                        <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.facebook.com/"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                        <a href="#https://in.pinterest.com/"><i class="fab fa-pinterest"></i></a>
                     </div>
                 </div>
                 
@@ -389,29 +246,26 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                     <h3>Shop</h3>
                     <ul>
                         <li><a href="products.php">All Products</a></li>
-                        <li><a href="#">New Arrivals</a></li>
-                        <li><a href="#">Best Sellers</a></li>
-                        <li><a href="#">On Sale</a></li>
+                        <li><a href="products.php">New Arrivals</a></li>
+                    
                     </ul>
                 </div>
                 
                 <div class="footer-column">
                     <h3>Support</h3>
                     <ul>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Shipping & Returns</a></li>
-                        <li><a href="#">Size Guide</a></li>
+                        <li><a href="contact.php">Contact Us</a></li>
+                        <li><a href="contact.php">FAQs</a></li>
+                        
                     </ul>
                 </div>
                 
                 <div class="footer-column">
                     <h3>Company</h3>
                     <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Our Stores</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="about.php">About Us</a></li>
+                        <li><a href="products.php">Our Stores</a></li>
+                        
                     </ul>
                 </div>
             </div>
@@ -443,12 +297,21 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                         // Update cart count
                         const badge = document.querySelector('.badge');
                         badge.textContent = parseInt(badge.textContent) + 1;
-                        
-                        // Animate the button
-                        this.style.transform = 'scale(1.2)';
+                        badge.style.animation = 'none';
+                        badge.offsetHeight; // Trigger reflow
+                        badge.style.animation = 'pulse 0.6s ease-in-out';
+
+                        // Animate the button (using modern theme hover effect)
+                        this.style.transform = 'scale(1.1) rotate(90deg)';
+                        this.style.boxShadow = '0 10px 25px rgba(255, 107, 53, 0.4)';
                         setTimeout(() => {
-                            this.style.transform = 'scale(1)';
-                        }, 200);
+                            this.style.transform = '';
+                            this.style.boxShadow = '';
+                        }, 300);
+
+                        // Show success notification (if implemented using the modern theme style)
+                        // showNotification('Product added to cart!', 'success');
+
                     } else {
                         alert(data.message);
                     }
@@ -459,7 +322,72 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                 });
             });
         });
+        
+        // Optional: Add header scroll effect if you want it on products page too
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
     });
+
+    // --- Custom Dropdown Functionality ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const customDropdowns = document.querySelectorAll('.custom-dropdown');
+
+        customDropdowns.forEach(dropdown => {
+            const display = dropdown.querySelector('.dropdown-display');
+            const optionsList = dropdown.querySelector('.dropdown-options');
+            const options = optionsList.querySelectorAll('li');
+            const selectedValueSpan = dropdown.querySelector('.selected-value');
+
+            // Toggle dropdown on display click
+            display.addEventListener('click', function() {
+                dropdown.classList.toggle('open');
+            });
+
+            // Select option on click
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedValue = this.dataset.value;
+                    const selectedText = this.textContent;
+
+                    // Update displayed value
+                    selectedValueSpan.textContent = selectedText;
+
+                    // Update selected class on options list
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    // Close dropdown
+                    dropdown.classList.remove('open');
+
+                    // Trigger filtering/sorting based on the dropdown
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (dropdown.id === 'categoryDropdown') {
+                        urlParams.set('category', selectedValue);
+                    } else if (dropdown.id === 'sortByDropdown') {
+                        urlParams.set('sort', selectedValue);
+                    }
+                    window.location.search = urlParams.toString();
+                });
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            customDropdowns.forEach(dropdown => {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('open');
+                }
+            });
+        });
+    });
+    // --- End Custom Dropdown Functionality ---
+
     </script>
 </body>
 </html> 
