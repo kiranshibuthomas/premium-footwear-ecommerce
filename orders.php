@@ -19,7 +19,9 @@ $user = $user_result->fetch_assoc();
 // Fetch orders with items
 $orders_query = "SELECT o.*, 
                 COUNT(oi.id) as item_count,
-                GROUP_CONCAT(CONCAT(p.name, ' (', oi.quantity, ')') SEPARATOR ', ') as items
+                GROUP_CONCAT(CONCAT(p.name, ' (', oi.quantity, ')') SEPARATOR ', ') as items,
+                GROUP_CONCAT(p.id) as product_ids,
+                GROUP_CONCAT(oi.quantity) as quantities
                 FROM orders o
                 JOIN order_items oi ON o.id = oi.order_id
                 JOIN products p ON oi.product_id = p.id
@@ -130,49 +132,55 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                     <?php while ($order = $orders_result->fetch_assoc()): ?>
                     <div class="order-card">
                         <div class="order-header">
-                            <div class="order-id">
-                                <i class="fas fa-hashtag"></i>
-                                Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?>
+                            <div class="order-info">
+                                <h3>Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></h3>
+                                <p class="order-date"><?php echo date('F j, Y', strtotime($order['created_at'])); ?></p>
                             </div>
-                            <div class="order-date">
-                                <i class="far fa-calendar-alt"></i>
-                                <?php echo date('F j, Y, g:i a', strtotime($order['created_at'])); ?>
-                            </div>
-                            <div class="order-status status-<?php echo $order['status']; ?>">
-                                <i class="fas fa-<?php 
-                                    echo $order['status'] === 'pending' ? 'clock' : 
-                                        ($order['status'] === 'processing' ? 'cog' : 
-                                        ($order['status'] === 'shipped' ? 'truck' : 
-                                        ($order['status'] === 'delivered' ? 'check-circle' : 'times-circle'))); 
-                                ?>"></i>
-                                <?php echo ucfirst($order['status']); ?>
+                            <div class="order-status">
+                                <?php
+                                $status_classes = [
+                                    'pending' => 'status-pending',
+                                    'processing' => 'status-processing',
+                                    'shipped' => 'status-shipped',
+                                    'delivered' => 'status-delivered',
+                                    'cancelled' => 'status-cancelled'
+                                ];
+                                $status_class = $status_classes[$order['status']] ?? 'status-pending';
+                                ?>
+                                <span class="status-badge <?php echo $status_class; ?>">
+                                    <?php echo ucfirst($order['status']); ?>
+                                </span>
                             </div>
                         </div>
+                        
                         <div class="order-details">
+                            <p><strong>Items:</strong> <?php echo $order['item_count']; ?></p>
+                            <p><strong>Total:</strong> $<?php echo number_format($order['total_amount'], 2); ?></p>
+                            <p><strong>Shipping Address:</strong> <?php echo htmlspecialchars($order['shipping_address']); ?></p>
+                            
                             <div class="order-items">
-                                <strong>Order Items:</strong>
-                                <ul class="order-items-list">
+                                <h4>Order Items:</h4>
+                                <ul>
                                     <?php 
                                     $items = explode(', ', $order['items']);
-                                    foreach ($items as $item): 
+                                    foreach ($items as $item) {
+                                        echo "<li>" . htmlspecialchars($item) . "</li>";
+                                    }
                                     ?>
-                                    <li>
-                                        <span><?php echo htmlspecialchars($item); ?></span>
-                                    </li>
-                                    <?php endforeach; ?>
                                 </ul>
                             </div>
-                            <div class="order-info">
-                                <div class="order-total">
-                                    <strong>Total Amount:</strong>
-                                    <span>$<?php echo number_format($order['total_amount'], 2); ?></span>
-                                </div>
-                                <div class="order-address">
-                                    <strong>Shipping Address:</strong>
-                                    <p><?php echo nl2br(htmlspecialchars($order['shipping_address'])); ?></p>
-                                </div>
-                            </div>
                         </div>
+
+                        <?php if ($order['status'] === 'pending'): ?>
+                            <div class="order-actions">
+                                <button class="cancel-order-btn" 
+                                        data-order-id="<?php echo $order['id']; ?>"
+                                        data-product-ids="<?php echo htmlspecialchars($order['product_ids']); ?>"
+                                        data-quantities="<?php echo htmlspecialchars($order['quantities']); ?>">
+                                    Cancel Order
+                                </button>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <?php endwhile; ?>
                 <?php endif; ?>
@@ -245,6 +253,38 @@ $cart_count = $cart_result->fetch_assoc()['count'];
             const loadingOverlay = document.querySelector('.loading-overlay');
             loadingOverlay.classList.add('hidden');
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle order cancellation
+            document.querySelectorAll('.cancel-order-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to cancel this order?')) {
+                        const orderId = this.dataset.orderId;
+                        
+                        fetch('cancel_order.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: 'order_id=' + orderId
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Order cancelled successfully!');
+                                location.reload();
+                            } else {
+                                alert(data.message || 'Failed to cancel order');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while cancelling the order');
+                        });
+                    }
+                });
+            });
+        });
     </script>
 
     <style>
@@ -314,5 +354,37 @@ $cart_count = $cart_result->fetch_assoc()['count'];
             border-radius: 10px;
         }
 
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-processing { background: #cce5ff; color: #004085; }
+        .status-shipped { background: #d4edda; color: #155724; }
+        .status-delivered { background: #d1e7dd; color: #0f5132; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+
+        .order-actions {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .cancel-order-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .cancel-order-btn:hover {
+            background: #c82333;
+        }
+    </style>
 </body>
 </html> 
