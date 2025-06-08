@@ -263,6 +263,12 @@ $products = $conn->query("SELECT * FROM products ORDER BY created_at DESC");
                         </a>
                     </li>
                     <li class="admin-nav-item">
+                        <a href="messages.php" class="admin-nav-link">
+                            <i class="fas fa-envelope"></i>
+                            Messages
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
                         <a href="logout.php" class="admin-nav-link">
                             <i class="fas fa-sign-out-alt"></i>
                             Logout

@@ -436,9 +436,9 @@ $cart_count = $cart_result->fetch_assoc()['count'];
         const images = [
             'uploads/ui/shoe1.png',
             'uploads/ui/shoe2.png',
-            'uploads/ui/shoe6.png',
-            'uploads/ui/shoe4.png',
             'uploads/ui/shoe5.png',
+            'uploads/ui/shoe4.png',
+            'uploads/ui/shoe1.png',
             'uploads/ui/shoe3.png',
             'uploads/ui/shoe7.png',
             'uploads/ui/Spin.png'

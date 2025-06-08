@@ -130,25 +130,48 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                     <?php while ($order = $orders_result->fetch_assoc()): ?>
                     <div class="order-card">
                         <div class="order-header">
-                            <div class="order-id">Order #<?php echo $order['id']; ?></div>
+                            <div class="order-id">
+                                <i class="fas fa-hashtag"></i>
+                                Order #<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?>
+                            </div>
                             <div class="order-date">
                                 <i class="far fa-calendar-alt"></i>
-                                <?php echo date('F j, Y', strtotime($order['created_at'])); ?>
+                                <?php echo date('F j, Y, g:i a', strtotime($order['created_at'])); ?>
                             </div>
                             <div class="order-status status-<?php echo $order['status']; ?>">
-                                <i class="fas fa-circle"></i>
+                                <i class="fas fa-<?php 
+                                    echo $order['status'] === 'pending' ? 'clock' : 
+                                        ($order['status'] === 'processing' ? 'cog' : 
+                                        ($order['status'] === 'shipped' ? 'truck' : 
+                                        ($order['status'] === 'delivered' ? 'check-circle' : 'times-circle'))); 
+                                ?>"></i>
                                 <?php echo ucfirst($order['status']); ?>
                             </div>
                         </div>
-                        <div class="order-items">
-                            <strong>Items:</strong> <?php echo htmlspecialchars($order['items']); ?>
-                        </div>
-                        <div class="order-total">
-                            Total: $<?php echo number_format($order['total_amount'], 2); ?>
-                        </div>
-                        <div class="order-address">
-                            <strong>Shipping Address:</strong><br>
-                            <?php echo nl2br(htmlspecialchars($order['shipping_address'])); ?>
+                        <div class="order-details">
+                            <div class="order-items">
+                                <strong>Order Items:</strong>
+                                <ul class="order-items-list">
+                                    <?php 
+                                    $items = explode(', ', $order['items']);
+                                    foreach ($items as $item): 
+                                    ?>
+                                    <li>
+                                        <span><?php echo htmlspecialchars($item); ?></span>
+                                    </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                            <div class="order-info">
+                                <div class="order-total">
+                                    <strong>Total Amount:</strong>
+                                    <span>$<?php echo number_format($order['total_amount'], 2); ?></span>
+                                </div>
+                                <div class="order-address">
+                                    <strong>Shipping Address:</strong>
+                                    <p><?php echo nl2br(htmlspecialchars($order['shipping_address'])); ?></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <?php endwhile; ?>
@@ -223,5 +246,73 @@ $cart_count = $cart_result->fetch_assoc()['count'];
             loadingOverlay.classList.add('hidden');
         });
     </script>
+
+    <style>
+        .order-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .order-details {
+            display: grid;
+            gap: 20px;
+        }
+
+        .order-items-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .order-items-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .order-items-list li:last-child {
+            border-bottom: none;
+        }
+
+        .order-info {
+            display: grid;
+            gap: 20px;
+        }
+
+        .order-total {
+            font-size: 1.2rem;
+            color: var(--accent);
+            text-align: right;
+        }
+
+        .order-total strong {
+            color: var(--text-light);
+            margin-right: 10px;
+        }
+
+        .order-address {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
 </body>
 </html> 

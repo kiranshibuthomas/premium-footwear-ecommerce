@@ -87,6 +87,18 @@ if (!$orders) {
                             Orders
                         </a>
                     </li>
+                    <li class="admin-nav-item">
+                        <a href="messages.php" class="admin-nav-link">
+                            <i class="fas fa-envelope"></i>
+                            Messages
+                        </a>
+                    </li>
+                    <li class="admin-nav-item" style="margin-top: auto;">
+                        <a href="logout.php" class="admin-nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -170,6 +182,7 @@ if (!$orders) {
     <!-- Order Details Modal -->
     <div id="orderModal" class="admin-modal">
         <div class="admin-modal-content">
+            <span class="close" onclick="hideModal('orderModal')">&times;</span>
             <h2>Order Details</h2>
             <div class="order-details">
                 <div class="admin-form-group">
@@ -180,6 +193,11 @@ if (!$orders) {
                 <div class="admin-form-group">
                     <label class="admin-form-label">Customer Email</label>
                     <div id="order-email" class="admin-form-value"></div>
+                </div>
+
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Order Date</label>
+                    <div id="order-date" class="admin-form-value"></div>
                 </div>
 
                 <div class="admin-form-group">
@@ -197,50 +215,306 @@ if (!$orders) {
                     <div id="order-address" class="admin-form-value"></div>
                 </div>
 
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Current Status</label>
+                    <div id="current-status" class="admin-form-value"></div>
+                </div>
+
                 <form action="orders.php" method="POST" class="admin-form-group">
                     <input type="hidden" name="action" value="update_status">
                     <input type="hidden" name="order_id" id="status-order-id">
                     
                     <label class="admin-form-label">Update Status</label>
-                    <select name="status" class="admin-form-input" onchange="this.form.submit()">
-                        <option value="pending">Pending</option>
-                        <option value="processing">Processing</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
+                    <div class="status-update-container">
+                        <select name="status" id="status-select" class="admin-form-input">
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button type="submit" class="admin-btn admin-btn-primary">
+                            <i class="fas fa-save"></i> Update Status
+                        </button>
+                    </div>
                 </form>
-            </div>
-
-            <div class="admin-modal-actions">
-                <button class="admin-btn admin-btn-secondary" onclick="hideModal('orderModal')">Close</button>
             </div>
         </div>
     </div>
 
+    <style>
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .admin-modal.show {
+            opacity: 1;
+        }
+
+        .admin-modal-content {
+            background: var(--dark);
+            width: 90%;
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 2.5rem;
+            border-radius: 12px;
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+        }
+
+        .admin-modal.show .admin-modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .admin-modal-content h2 {
+            color: var(--light);
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .close:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .order-details {
+            display: grid;
+            gap: 1.8rem;
+        }
+
+        .admin-form-group {
+            margin-bottom: 0;
+        }
+
+        .admin-form-label {
+            color: var(--light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .admin-form-value {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 1.2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--light);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .admin-form-value:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        .status-update-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .status-update-container select {
+            flex: 1;
+            background: var(--darker);
+            color: var(--light);
+            border: 1px solid var(--glass-border);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-update-container select:hover {
+            border-color: var(--primary);
+        }
+
+        .status-update-container select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+        }
+
+        .status-update-container button {
+            white-space: nowrap;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-update-container button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .status-update-container button:active {
+            transform: translateY(0);
+        }
+
+        #current-status .admin-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #current-status .admin-badge i {
+            font-size: 0.8rem;
+        }
+
+        /* Custom scrollbar for modal */
+        .admin-modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .admin-modal-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .admin-modal-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .admin-modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .admin-modal-content {
+                margin: 15px auto;
+                padding: 1.5rem;
+            }
+
+            .status-update-container {
+                flex-direction: column;
+            }
+            
+            .status-update-container button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .admin-form-value {
+                padding: 0.8rem 1rem;
+            }
+        }
+    </style>
+
     <script>
         function showOrderDetails(order) {
+            const modal = document.getElementById('orderModal');
+            modal.style.display = 'block';
+            // Trigger reflow
+            modal.offsetHeight;
+            modal.classList.add('show');
+
             document.getElementById('order-id').textContent = '#' + String(order.id).padStart(5, '0');
             document.getElementById('order-email').textContent = order.user_email;
+            document.getElementById('order-date').textContent = new Date(order.created_at).toLocaleString();
             document.getElementById('order-items').textContent = order.items;
             document.getElementById('order-amount').textContent = '$' + parseFloat(order.total_amount).toFixed(2);
             document.getElementById('order-address').textContent = order.shipping_address;
             document.getElementById('status-order-id').value = order.id;
-            
-            const statusSelect = document.querySelector('select[name="status"]');
-            statusSelect.value = order.status;
-            
-            document.getElementById('orderModal').style.display = 'flex';
+            document.getElementById('current-status').innerHTML = `
+                <span class="admin-badge admin-badge-${getStatusClass(order.status)}">
+                    <i class="fas fa-${getStatusIcon(order.status)}"></i>
+                    ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                </span>
+            `;
+            document.getElementById('status-select').value = order.status;
+        }
+
+        function getStatusClass(status) {
+            const statusClasses = {
+                'pending': 'warning',
+                'processing': 'primary',
+                'shipped': 'info',
+                'delivered': 'success',
+                'cancelled': 'danger'
+            };
+            return statusClasses[status] || 'secondary';
+        }
+
+        function getStatusIcon(status) {
+            const statusIcons = {
+                'pending': 'clock',
+                'processing': 'cog',
+                'shipped': 'truck',
+                'delivered': 'check-circle',
+                'cancelled': 'times-circle'
+            };
+            return statusIcons[status] || 'circle';
         }
 
         function hideModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
         }
 
         // Close modal when clicking outside
         window.onclick = function(event) {
-            if (event.target.classList.contains('admin-modal')) {
-                event.target.style.display = 'none';
+            if (event.target.className === 'admin-modal') {
+                hideModal('orderModal');
             }
         }
     </script>
