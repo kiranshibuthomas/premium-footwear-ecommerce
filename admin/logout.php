@@ -20,6 +20,6 @@ session_destroy();
 
 // Redirect to main login page with a logout message
 $_SESSION['logout_message'] = "You have been successfully logged out.";
-header('Location: ../login.php');
+header('Location: ../index.php');
 exit();
 ?> 

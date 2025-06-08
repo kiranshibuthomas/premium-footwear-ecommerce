@@ -2,9 +2,24 @@
 require_once '../includes/config.php';
 require_once '../includes/db.php';
 
+// Add this at the top of the file, after the require statements
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+ini_set('error_log', '../logs/php-error.log');
+
+// Create a debug log file
+$debug_log = dirname(__DIR__) . '/debug.log';
+function write_debug($message) {
+    global $debug_log;
+    $timestamp = date('Y-m-d H:i:s');
+    $log_message = "[$timestamp] $message\n";
+    file_put_contents($debug_log, $log_message, FILE_APPEND);
+}
+
 // Check if admin is logged in
 if (!isset($_SESSION['admin_id'])) {
-    header('Location: ../login.php');
+    header('Location: ../index.php');
     exit();
 }
 
@@ -73,72 +88,113 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($price <= 0) throw new Exception("Price must be greater than zero");
                     if ($stock < 0) throw new Exception("Stock cannot be negative");
 
+                    // Get current product data
+                    $stmt = $conn->prepare("SELECT image_path FROM products WHERE id = ?");
+                    $stmt->bind_param("i", $id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $current_product = $result->fetch_assoc();
+                    
+                    $image_path = $current_product['image_path']; // Keep existing image by default
+                    $image_updated = false;
+
                     // Handle file upload for edit
-                    if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
-                        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-                        $filename = $_FILES['image']['name'];
-                        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                    if (isset($_FILES['image'])) {
+                        write_debug("File upload detected");
                         
-                        if (!in_array($ext, $allowed)) {
-                            throw new Exception("Invalid file format. Allowed formats: " . implode(', ', $allowed));
-                        }
-                        
-                        $upload_dir = '../uploads/products/';
-                        $image_path = 'product_' . time() . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
-                        
-                        if (!move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image_path)) {
-                            throw new Exception("Failed to upload image");
-                        }
-                        
-                        // Delete old image if exists
-                        $stmt = $conn->prepare("SELECT image_path FROM products WHERE id = ?");
-                        $stmt->bind_param("i", $id);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        if ($old_image = $result->fetch_assoc()) {
-                            if ($old_image['image_path'] && file_exists($upload_dir . $old_image['image_path'])) {
-                                unlink($upload_dir . $old_image['image_path']);
+                        // Check if a new file was actually selected (not just the form being submitted)
+                        if ($_FILES['image']['error'] === 0 && $_FILES['image']['size'] > 0) {
+                            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+                            $filename = $_FILES['image']['name'];
+                            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                            
+                            if (!in_array($ext, $allowed)) {
+                                throw new Exception("Invalid file format. Allowed formats: " . implode(', ', $allowed));
                             }
+                            
+                            // Use absolute path for uploads directory
+                            $upload_dir = dirname(__DIR__) . '/uploads/products/';
+                            
+                            // Create directory if it doesn't exist
+                            if (!file_exists($upload_dir)) {
+                                if (!@mkdir($upload_dir, 0755, true)) {
+                                    throw new Exception("Unable to create upload directory. Please contact support.");
+                                }
+                            }
+                            
+                            // Check directory permissions
+                            if (!is_writable($upload_dir)) {
+                                if (!@chmod($upload_dir, 0755)) {
+                                    throw new Exception("Upload directory is not writable. Please contact support.");
+                                }
+                            }
+                            
+                            // Generate unique filename
+                            $new_image_path = 'product_' . time() . '_' . uniqid() . '.' . $ext;
+                            $full_path = $upload_dir . $new_image_path;
+                            
+                            // Try to move the uploaded file
+                            if (@move_uploaded_file($_FILES['image']['tmp_name'], $full_path)) {
+                                // Verify the file exists and is readable
+                                if (file_exists($full_path) && is_readable($full_path)) {
+                                    // Delete old image if exists
+                                    if ($current_product['image_path']) {
+                                        $old_file = $upload_dir . $current_product['image_path'];
+                                        if (file_exists($old_file)) {
+                                            @unlink($old_file);
+                                        }
+                                    }
+                                    
+                                    $image_path = $new_image_path;
+                                    $image_updated = true;
+                                } else {
+                                    @unlink($full_path);
+                                    throw new Exception("Failed to verify uploaded file. Please try again.");
+                                }
+                            } else {
+                                throw new Exception("Failed to upload image. Please try again or contact support.");
+                            }
+                        } else if ($_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+                            // If there was an error other than no file selected
+                            $error_messages = [
+                                UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+                                UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive in the HTML form',
+                                UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+                                UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+                                UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                                UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload'
+                            ];
+                            $error_message = isset($error_messages[$_FILES['image']['error']]) 
+                                ? $error_messages[$_FILES['image']['error']] 
+                                : 'Unknown upload error';
+                            throw new Exception("Upload error: " . $error_message);
                         }
-                        
-                        $stmt = $conn->prepare("UPDATE products SET name=?, description=?, price=?, stock=?, category=?, image_path=? WHERE id=?");
-                        $stmt->bind_param("ssdsssi", $name, $description, $price, $stock, $category, $image_path, $id);
-                    } else {
-                        $stmt = $conn->prepare("UPDATE products SET name=?, description=?, price=?, stock=?, category=? WHERE id=?");
-                        $stmt->bind_param("ssdssi", $name, $description, $price, $stock, $category, $id);
                     }
                     
+                    // Update product with new image path
+                    $stmt = $conn->prepare("UPDATE products SET name=?, description=?, price=?, stock=?, category=?, image_path=? WHERE id=?");
+                    $stmt->bind_param("ssdsssi", $name, $description, $price, $stock, $category, $image_path, $id);
+                    
                     if ($stmt->execute()) {
-                        $success_message = "Product updated successfully!";
+                        $success_message = "Product updated successfully!" . ($image_updated ? " Image has been updated." : "");
                     } else {
-                        throw new Exception("Failed to update product");
+                        if ($image_updated) {
+                            @unlink($full_path);
+                        }
+                        throw new Exception("Failed to update product. Please try again.");
                     }
                     break;
 
                 case 'delete':
                     $id = intval($_POST['id']);
                     
-                    // Delete product image first
-                    $stmt = $conn->prepare("SELECT image_path FROM products WHERE id = ?");
-                    $stmt->bind_param("i", $id);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if ($product = $result->fetch_assoc()) {
-                        if ($product['image_path']) {
-                            $image_file = '../uploads/products/' . $product['image_path'];
-                            if (file_exists($image_file)) {
-                                unlink($image_file);
-                            }
-                        }
-                    }
-                    
-                    // Delete product record
-                    $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
+                    // Instead of deleting, update the product to mark it as deleted
+                    $stmt = $conn->prepare("UPDATE products SET stock = 0, name = CONCAT(name, ' (Deleted)') WHERE id = ?");
                     $stmt->bind_param("i", $id);
                     if ($stmt->execute()) {
-                        $success_message = "Product deleted successfully!";
+                        $success_message = "Product has been removed from the store!";
                     } else {
-                        throw new Exception("Failed to delete product");
+                        throw new Exception("Failed to remove product");
                     }
                     break;
             }
@@ -149,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch all products
-$products = $conn->query("SELECT * FROM products ORDER BY created_at DESC");
+$products = $conn->query("SELECT * FROM products WHERE name NOT LIKE '%(Deleted)%' ORDER BY created_at DESC");
 ?>
 
 <!DOCTYPE html>
@@ -299,8 +355,18 @@ $products = $conn->query("SELECT * FROM products ORDER BY created_at DESC");
                 <?php while ($product = $products->fetch_assoc()): ?>
                     <div class="product-card">
                         <div class="product-image">
-                            <img src="<?php echo $product['image_path'] ? '../uploads/products/' . htmlspecialchars($product['image_path']) : '../uploads/products/default.jpg'; ?>" 
-                                 alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            <img src="<?php 
+                                if ($product['image_path']) {
+                                    // Use absolute URL for images
+                                    $image_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+                                    $image_url .= dirname($_SERVER['PHP_SELF']) . '/../uploads/products/' . htmlspecialchars($product['image_path']);
+                                    echo $image_url;
+                                } else {
+                                    echo '../uploads/products/default.jpg';
+                                }
+                            ?>" 
+                            alt="<?php echo htmlspecialchars($product['name']); ?>"
+                            onerror="this.src='../uploads/products/default.jpg'">
                         </div>
                         <div class="product-details">
                             <h3><?php echo htmlspecialchars($product['name']); ?></h3>

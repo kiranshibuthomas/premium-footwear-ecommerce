@@ -4,7 +4,7 @@ require_once 'includes/db.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -79,7 +79,7 @@ $cart_count = $cart_result->fetch_assoc()['count'];
                             <div class="user-email"><?php echo htmlspecialchars($user['email']); ?></div>
                         </div>
                         <ul>
-                            <li><a href="profile.php"><i class="fas fa-user-circle"></i> My Profile</a></li>
+                           
                             <li><a href="orders.php"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
                             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                         </ul>

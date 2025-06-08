@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Check if admin is logged in
 if (!isset($_SESSION['admin_id'])) {
-    header('Location: ../login.php');
+    header('Location: ../index.php');
     exit();
 }
 
@@ -227,12 +227,12 @@ if (!$orders) {
                     <label class="admin-form-label">Update Status</label>
                     <div class="status-update-container">
                         <select name="status" id="status-select" class="admin-form-input">
-                            <option value="pending">Pending</option>
-                            <option value="processing">Processing</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
                         <button type="submit" class="admin-btn admin-btn-primary">
                             <i class="fas fa-save"></i> Update Status
                         </button>

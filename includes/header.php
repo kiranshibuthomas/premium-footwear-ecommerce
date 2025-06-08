@@ -44,7 +44,7 @@ require_once 'auth.php';
                             </div>
                         </div>
                     <?php else: ?>
-                        <a href="<?php echo SITE_URL; ?>/login.php" class="btn btn-outline">Login</a>
+                        <a href="<?php echo SITE_URL; ?>/index.php" class="btn btn-outline">Login</a>
                         <a href="<?php echo SITE_URL; ?>/register.php" class="btn">Register</a>
                     <?php endif; ?>
                 </div>

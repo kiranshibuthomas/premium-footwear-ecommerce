@@ -33,7 +33,7 @@ function getCurrentUserName() {
 function requireLogin() {
     if (!isLoggedIn()) {
         $_SESSION['error_message'] = "Please login to access this page.";
-        header("Location: /login.php");
+        header("Location: " . SITE_URL . "/index.php");
         exit();
     }
 }
@@ -43,7 +43,7 @@ function requireLogin() {
  */
 function requireAdmin() {
     if (!isAdmin()) {
-        header('Location: ' . SITE_URL . '/admin/login.php');
+        header('Location: ' . SITE_URL . '/admin/dashboard.php');
         exit();
     }
 }

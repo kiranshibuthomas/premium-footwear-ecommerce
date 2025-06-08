@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->execute()) {
                 $success_message = "Registration successful! You can now login.";
                 // Redirect to login page after 2 seconds
-                header("refresh:2;url=login.php");
+                header("refresh:2;url=index.php");
             } else {
                 $error_message = "Registration failed. Please try again.";
             }
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
 
             <div class="links">
-                Already have an account? <a href="login.php">Login here</a>
+                Already have an account? <a href="index.php">Login here</a>
             </div>
         </form>
     </div>

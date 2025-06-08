@@ -6,7 +6,7 @@ require_once '../includes/auth.php';
 // Check if admin is logged in
 if (!isAdmin()) {
     $_SESSION['error_message'] = "You don't have permission to access this page.";
-    header('Location: ' . SITE_URL . '/login.php');
+    header('Location: ' . SITE_URL . '/index.php');
     exit();
 }
 
